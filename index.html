@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>My Login Page</title>
+    <style>
+
+      body {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px;
+        min-height: 100vh;
+      }
+
+      h1 {
+        color: white;
+        font-size: 32px;
+        margin-bottom: 5px;
+      }
+
+      h1 + p {
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 20px;
+      }
+
+      form {
+        background-color: white;
+        padding: 32px;
+        border-radius: 16px;
+        width: 320px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      }
+
+      form h2 {
+        color: #4f46e5;
+        margin-bottom: 20px;
+        font-size: 20px;
+      }
+
+      label {
+        font-weight: bold;
+        font-size: 13px;
+        color: #555;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      input {
+        width: 100%;
+        padding: 11px;
+        margin-bottom: 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+      }
+
+      input:focus {
+        border-color: #667eea;
+      }
+
+      .btn-login {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      .btn-signup {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      .btn-login:hover, .btn-signup:hover {
+        opacity: 0.85;
+      }
+
+      .msg {
+        font-size: 13px;
+        margin-bottom: 12px;
+        min-height: 18px;
+      }
+
+    </style>
+  </head>
+
+  <body>
+
+    <h1>Welcome Back</h1>
+    <p>Login to your account</p>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm">
+      <h2>🔐 Login</h2>
+
+      <label>Username</label>
+      <input type="text" id="username" placeholder="Enter your username" />
+
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter your password" />
+
+      <p id="loginMsg" class="msg"></p>
+
+      <button type="submit" class="btn-login">Login</button>
+    </form>
+
+    <!-- SIGNUP FORM -->
+    <form id="signupForm">
+      <h2>✨ Sign Up</h2>
+
+      <label>Name</label>
+      <input type="text" id="name" placeholder="Your full name" />
+
+      <label>Email</label>
+      <input type="email" id="email" placeholder="you@email.com" />
+
+      <label>Password</label>
+      <input type="password" id="signupPassword" placeholder="Create a password" />
+
+      <p id="signupMsg" class="msg"></p>
+
+      <button type="submit" class="btn-signup">Sign Up</button>
+    </form>
+
+    <script>
+
+      // ── LOGIN ──────────────────────────────────
+      document.getElementById("loginForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+
+        if (username === "" || password === "") {
+          document.getElementById("loginMsg").innerText = "⚠️ Please fill in all fields!";
+          document.getElementById("loginMsg").style.color = "red";
+          return;
+        }
+
+        let response = await fetch("http://127.0.0.1:8000/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: username, password: password })
+        });
+
+        let result = await response.json();
+
+        if (result.success) {
+          document.getElementById("loginMsg").innerText = "✅ " + result.message;
+          document.getElementById("loginMsg").style.color = "green";
+        } else {
+          document.getElementById("loginMsg").innerText = "❌ " + result.message;
+          document.getElementById("loginMsg").style.color = "red";
+        }
+        if (result.success) {
+  // Save username so dashboard can show it
+  localStorage.setItem("loggedInUser", username);
+  // Redirect to dashboard page
+  window.location.href = "dashboard.html";
+}
+      });
+
+      // ── SIGNUP ─────────────────────────────────
+      document.getElementById("signupForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        let name     = document.getElementById("name").value;
+        let email    = document.getElementById("email").value;
+        let password = document.getElementById("signupPassword").value;
+
+        if (name === "" || email === "" || password === "") {
+          document.getElementById("signupMsg").innerText = "⚠️ Please fill in all fields!";
+          document.getElementById("signupMsg").style.color = "red";
+          return;
+        }
+
+        let response = await fetch("http://127.0.0.1:8000/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: name, email: email, password: password })
+        });
+
+        let result = await response.json();
+
+        if (result.success) {
+          document.getElementById("signupMsg").innerText = "✅ " + result.message;
+          document.getElementById("signupMsg").style.color = "green";
+        } else {
+          document.getElementById("signupMsg").innerText = "❌ " + result.message;
+          document.getElementById("signupMsg").style.color = "red";
+        }
+      });
+
+    </script>
+
+  </body>
+
+</html>

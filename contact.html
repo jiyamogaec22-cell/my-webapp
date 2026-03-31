@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Contact Me</title>
+    <style>
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px;
+        min-height: 100vh;
+      }
+
+      /* NAVBAR */
+      .navbar {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        background: #1e1b4b;
+        padding: 14px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 100;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      }
+
+      .navbar .logo {
+        color: #a5b4fc;
+        font-size: 18px;
+        font-weight: bold;
+        text-decoration: none;
+      }
+
+      .navbar .nav-links {
+        display: flex;
+        gap: 8px;
+      }
+
+      .navbar .nav-links a {
+        color: #c7d2fe;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: background 0.2s;
+      }
+
+      .navbar .nav-links a:hover { background: #3730a3; color: white; }
+
+      .navbar .nav-links a.active {
+        background: #4f46e5;
+        color: white;
+      }
+
+      .navbar .btn-logout {
+        background: #ef4444;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .navbar .btn-logout:hover { background: #dc2626; }
+
+      /* Push content below navbar */
+      .page-content {
+        margin-top: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+
+      h1 {
+        color: white;
+        font-size: 30px;
+        margin-bottom: 6px;
+      }
+
+      h1 + p {
+        color: rgba(255,255,255,0.85);
+        margin-bottom: 28px;
+        font-size: 14px;
+      }
+
+      form {
+        background: white;
+        padding: 36px;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 460px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      }
+
+      label {
+        display: block;
+        font-size: 13px;
+        font-weight: bold;
+        color: #555;
+        margin-bottom: 6px;
+      }
+
+      input, textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        margin-bottom: 18px;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+        transition: border-color 0.2s;
+      }
+
+      input:focus, textarea:focus { border-color: #f97316; }
+
+      textarea {
+        height: 120px;
+        resize: vertical;
+      }
+
+      button {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      button:hover { opacity: 0.88; }
+
+      .msg {
+        font-size: 13px;
+        margin-bottom: 14px;
+        min-height: 18px;
+      }
+
+    </style>
+  </head>
+
+  <body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <a class="logo" href="dashboard.html">🌐 MyApp</a>
+      <div class="nav-links">
+        <a href="dashboard.html">🏠 Home</a>
+        <a href="tasks.html">📝 Tasks</a>
+        <a href="contact.html" class="active">📩 Contact</a>
+      </div>
+      <a class="btn-logout" href="index.html">Logout</a>
+    </nav>
+
+    <!-- PAGE CONTENT -->
+    <div class="page-content">
+
+      <h1>📩 Contact Me</h1>
+      <p>Fill in the form below and I'll get back to you!</p>
+
+      <form id="contactForm">
+        <label>Your Name</label>
+        <input type="text" id="contactName" placeholder="Your full name" />
+
+        <label>Your Email</label>
+        <input type="email" id="contactEmail" placeholder="you@email.com" />
+
+        <label>Your Message</label>
+        <textarea id="contactMessage" placeholder="Write your message here..."></textarea>
+
+        <p id="contactMsg" class="msg"></p>
+
+        <button type="submit">Send Message 📨</button>
+      </form>
+
+    </div>
+
+    <!-- SCRIPT ALWAYS LAST BEFORE </body> -->
+    <script>
+
+      document.getElementById("contactForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        let name    = document.getElementById("contactName").value.trim();
+        let email   = document.getElementById("contactEmail").value.trim();
+        let message = document.getElementById("contactMessage").value.trim();
+
+        if (name === "" || email === "" || message === "") {
+          document.getElementById("contactMsg").innerText = "⚠️ Please fill in all fields!";
+          document.getElementById("contactMsg").style.color = "red";
+          return;
+        }
+
+        let response = await fetch("http://127.0.0.1:8000/contact", {
+          method:  "POST",
+          headers: { "Content-Type": "application/json" },
+          body:    JSON.stringify({ name: name, email: email, message: message })
+        });
+
+        let result = await response.json();
+
+        if (result.success) {
+          document.getElementById("contactMsg").innerText = "✅ Message sent! Thank you, " + name + "!";
+          document.getElementById("contactMsg").style.color = "green";
+          document.getElementById("contactForm").reset();
+        } else {
+          document.getElementById("contactMsg").innerText = "❌ Something went wrong!";
+          document.getElementById("contactMsg").style.color = "red";
+        }
+      });
+
+    </script>
+
+  </body>
+</html>
