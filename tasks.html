@@ -204,7 +204,7 @@
     <script>
 
       async function loadTasks() {
-        let response = await fetch("http://127.0.0.1:8000/tasks");
+        let response = await fetch("https://unicorn07.pythonanywhere.com/task");
         let result   = await response.json();
         let list = document.getElementById("taskList");
         list.innerHTML = "";
@@ -230,7 +230,7 @@
         let taskText = document.getElementById("taskInput").value.trim();
         if (taskText === "") { alert("⚠️ Please type a task first!"); return; }
 
-        await fetch("http://127.0.0.1:8000/tasks", {
+        await fetch("https://unicorn07.pythonanywhere.com/task" , {
           method:  "POST",
           headers: { "Content-Type": "application/json" },
           body:    JSON.stringify({ text: taskText })
@@ -241,12 +241,12 @@
       });
 
       async function markDone(id) {
-        await fetch("http://127.0.0.1:8000/tasks/" + id, { method: "PUT" });
+        await fetch("https://unicorn07.pythonanywhere.com/task" + id, { method: "PUT" });
         loadTasks();
       }
 
       async function deleteTask(id) {
-        await fetch("http://127.0.0.1:8000/tasks/" + id, { method: "DELETE" });
+        await fetch("https://unicorn07.pythonanywhere.com/task" + id, { method: "DELETE" });
         loadTasks();
       }
 
